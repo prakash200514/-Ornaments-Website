@@ -92,76 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // AJAX Add to Cart (Quick cart)
-    document.querySelectorAll('.quick-cart').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            const pid = btn.dataset.id;
-            const originalHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            btn.disabled = true;
-            try {
-                const res = await fetch('ajax/cart.php', {
-                    method: 'POST',
-                    body: JSON.stringify({ product_id: pid, quantity: 1 }),
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showToast('Added to cart! 🛍️', 'success');
-                    document.querySelectorAll('.hicon[title="Cart"] .badge, .hicon[href*="cart"] .badge').forEach(b => {
-                        b.textContent = data.count;
-                        b.style.display = 'flex';
-                    });
-                } else {
-                    showToast(data.error || 'Failed to add', 'error');
-                }
-            } catch (err) {
-                showToast('Network error', 'error');
-            }
-            btn.innerHTML = originalHtml;
-            btn.disabled = false;
-        });
-    });
-
-    // Form Add to Cart (Product Page)
-    const mainAddToCartForm = document.getElementById('mainAddToCartForm');
-    if (mainAddToCartForm) {
-        mainAddToCartForm.addEventListener('submit', async (e) => {
-            const isBuyNow = mainAddToCartForm.querySelector('[name=buy_now]').value === '1';
-            if (isBuyNow) return; // Let original form submit for redirect
-
-            e.preventDefault();
-            const btn = mainAddToCartForm.querySelector('button[name="add_cart"]:not([value="1"])');
-            const originalHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
-            btn.disabled = true;
-            
-            const pid = mainAddToCartForm.dataset.id;
-            const qty = mainAddToCartForm.querySelector('input[name="quantity"]').value;
-            
-            try {
-                const res = await fetch('ajax/cart.php', {
-                    method: 'POST',
-                    body: JSON.stringify({ product_id: pid, quantity: qty }),
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showToast('Added to cart! 🛍️', 'success');
-                    document.querySelectorAll('.hicon[title="Cart"] .badge, .hicon[href*="cart"] .badge').forEach(b => {
-                        b.textContent = data.count;
-                        b.style.display = 'flex';
-                    });
-                } else {
-                    showToast(data.error || 'Failed to add', 'error');
-                }
-            } catch (err) {
-                showToast('Network error', 'error');
-            }
-            btn.innerHTML = originalHtml;
-            btn.disabled = false;
-        });
-    }
+    // AJAX Add to Cart logic removed to use standard HTML links and forms that redirect to cart.php
 
     // AJAX Wishlist
     document.querySelectorAll('.wish-toggle').forEach(btn => {

@@ -2,6 +2,41 @@
 require_once 'includes/db.php';
 require_once 'includes/functions.php';
 
+// Handle add
+if (isset($_GET['add'])) {
+  $productId = (int)$_GET['add'];
+  $qty = 1;
+
+  $prod = $pdo->prepare("SELECT id, stock, name FROM products WHERE id=? AND is_active=1");
+  $prod->execute([$productId]);
+  $product = $prod->fetch();
+  if ($product && $product['stock'] >= 1) {
+      if (isLoggedIn()) {
+        $chk = $pdo->prepare("SELECT id, quantity FROM cart WHERE user_id=? AND product_id=?");
+        $chk->execute([$_SESSION['user_id'], $productId]);
+        $existing = $chk->fetch();
+        if ($existing) {
+          $pdo->prepare("UPDATE cart SET quantity=quantity+? WHERE id=?")->execute([$qty, $existing['id']]);
+        } else {
+          $pdo->prepare("INSERT INTO cart (user_id, product_id, quantity) VALUES (?,?,?)")->execute([$_SESSION['user_id'], $productId, $qty]);
+        }
+      } else {
+        $chk = $pdo->prepare("SELECT id, quantity FROM cart WHERE session_id=? AND product_id=?");
+        $chk->execute([cartKey(), $productId]);
+        $existing = $chk->fetch();
+        if ($existing) {
+          $pdo->prepare("UPDATE cart SET quantity=quantity+? WHERE id=?")->execute([$qty, $existing['id']]);
+        } else {
+          $pdo->prepare("INSERT INTO cart (session_id, product_id, quantity) VALUES (?,?,?)")->execute([cartKey(), $productId, $qty]);
+        }
+      }
+      flashMessage('success', safeHtml($product['name']) . ' added to your cart! 🛍️');
+  } else {
+      flashMessage('error', 'Product not available or out of stock.');
+  }
+  header('Location: cart.php'); exit;
+}
+
 // Handle remove
 if (isset($_GET['remove'])) {
   $id = (int)$_GET['remove'];
