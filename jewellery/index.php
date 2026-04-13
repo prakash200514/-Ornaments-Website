@@ -117,9 +117,9 @@ include 'includes/header.php';
             <?php endif; ?>
           </div>
         </div>
-        <a href="cart.php?add=<?= $p['id'] ?>" class="product-cart-btn" style="text-align:center; display:block; text-decoration:none;">
+        <button class="product-cart-btn quick-cart" data-id="<?= $p['id'] ?>">
           <i class="fas fa-shopping-bag"></i> Add to Cart
-        </a>
+        </button>
       </div>
       <?php endforeach; ?>
     </div>
@@ -178,9 +178,9 @@ include 'includes/header.php';
             <?php if ($p['discount_price']): ?><span class="price-original"><?= money($p['price']) ?></span><?php endif; ?>
           </div>
         </div>
-        <a href="cart.php?add=<?= $p['id'] ?>" class="product-cart-btn" style="text-align:center; display:block; text-decoration:none;">
+        <button class="product-cart-btn quick-cart" data-id="<?= $p['id'] ?>">
           <i class="fas fa-shopping-bag"></i> Add to Cart
-        </a>
+        </button>
       </div>
       <?php endforeach; ?>
     </div>

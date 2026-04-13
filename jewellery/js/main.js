@@ -3,18 +3,23 @@ const SITE_URL = '/jewellery'; // Fallback base URL for AJAX
 
 // ── TOAST NOTIFICATION ──
 window.showToast = function (msg, type = 'success') {
-    const container = document.querySelector('.flash-container');
-    const toast = document.createElement('div');
-    toast.className = `flash flash-${type} glass`;
-    const icon = type === 'success' ? '✅' : (type === 'error' ? '❌' : 'ℹ️');
-    toast.innerHTML = `${icon} ${msg}`;
-    container.appendChild(toast);
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(-10px)';
-        toast.style.transition = '0.4s ease';
-        setTimeout(() => toast.remove(), 400);
-    }, 4000);
+    let bgColor = type === 'success' ? '#27ae60' : (type === 'error' ? '#e74c3c' : '#3498db');
+    let icon = type === 'success' ? '✅ ' : (type === 'error' ? '❌ ' : 'ℹ️ ');
+    Toastify({
+        text: icon + msg,
+        duration: 3000,
+        close: true,
+        gravity: "top", // top or bottom
+        position: "right", // left, center or right
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+            background: bgColor,
+            borderRadius: "8px",
+            fontFamily: "Poppins, sans-serif",
+            fontSize: "14px",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.1)"
+        }
+    }).showToast();
 };
 
 // ── REVEAL ON SCROLL ──
@@ -80,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.qty-control').forEach(ctrl => {
         const display = ctrl.querySelector('.qty-val');
         const input = ctrl.querySelector('input[name="quantity"]');
-        ctrl.querySelectorAll('.qty-btn').forEach(btn => {
+        ctrl.querySelectorAll('button.qty-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 let v = parseInt(display.textContent) || 1;
@@ -92,7 +97,79 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // AJAX Add to Cart logic removed to use standard HTML links and forms that redirect to cart.php
+    // AJAX Add to Cart (Quick cart)
+    document.querySelectorAll('.quick-cart').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const pid = btn.dataset.id;
+            if(!pid) return;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+            try {
+                const res = await fetch('ajax/cart.php', {
+                    method: 'POST',
+                    body: JSON.stringify({ product_id: pid, quantity: 1 }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Added to cart! 🛍️', 'success');
+                    document.querySelectorAll('.hicon[title="Cart"] .badge, .hicon[href*="cart"] .badge').forEach(b => {
+                        b.textContent = data.count;
+                        b.style.display = 'flex';
+                    });
+                } else {
+                    showToast(data.error || 'Failed to add', 'error');
+                }
+            } catch (err) {
+                showToast('Network error', 'error');
+            }
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+        });
+    });
+
+    // Form Add to Cart (Product Page)
+    const mainAddToCartForm = document.getElementById('mainAddToCartForm');
+    if (mainAddToCartForm) {
+        mainAddToCartForm.addEventListener('submit', async (e) => {
+            const isBuyNow = mainAddToCartForm.querySelector('[name=buy_now]').value === '1';
+            if (isBuyNow) return; // Let original form submit for redirect
+
+            e.preventDefault();
+            const btn = mainAddToCartForm.querySelector('button[name="add_cart"]:not([value="1"])');
+            if(!btn) return;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            btn.disabled = true;
+            
+            const pid = mainAddToCartForm.dataset.id;
+            const qty = mainAddToCartForm.querySelector('input[name="quantity"]').value;
+            
+            try {
+                const res = await fetch('ajax/cart.php', {
+                    method: 'POST',
+                    body: JSON.stringify({ product_id: pid, quantity: qty }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Added to cart! 🛍️', 'success');
+                    document.querySelectorAll('.hicon[title="Cart"] .badge, .hicon[href*="cart"] .badge').forEach(b => {
+                        b.textContent = data.count;
+                        b.style.display = 'flex';
+                    });
+                } else {
+                    showToast(data.error || 'Failed to add', 'error');
+                }
+            } catch (err) {
+                showToast('Network error', 'error');
+            }
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+        });
+    }
 
     // AJAX Wishlist
     document.querySelectorAll('.wish-toggle').forEach(btn => {
