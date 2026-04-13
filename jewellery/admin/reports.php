@@ -60,15 +60,15 @@ include 'includes/header.php';
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
   <!-- Sales by Category Chart -->
-  <div class="chart-wrap">
+  <div class="chart-wrap" style="position:relative; height:350px;">
     <h3>📊 Sales by Category</h3>
-    <canvas id="categoryChart" height="200"></canvas>
+    <canvas id="categoryChart"></canvas>
   </div>
 
   <!-- Order Status Chart -->
-  <div class="chart-wrap">
+  <div class="chart-wrap" style="position:relative; height:350px;">
     <h3>📌 Order Status Distribution</h3>
-    <canvas id="statusChart" height="200"></canvas>
+    <canvas id="statusChart"></canvas>
   </div>
 </div>
 
