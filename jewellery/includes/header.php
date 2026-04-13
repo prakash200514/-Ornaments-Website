@@ -62,13 +62,13 @@ $_navCategories = $pdo->query("SELECT name, slug FROM categories WHERE is_active
 
       <a href="<?= SITE_URL ?>/wishlist.php" class="hicon" title="Wishlist">
         <i class="fas fa-heart"></i>
-        <?php if ($_wishlistCount > 0): ?><span class="badge"><?= $_wishlistCount ?></span><?php endif; ?>
+        <span class="badge" style="<?= $_wishlistCount > 0 ? '' : 'display:none;' ?>"><?= $_wishlistCount ?></span>
         <span class="hicon-label">Wishlist</span>
       </a>
 
       <a href="<?= SITE_URL ?>/cart.php" class="hicon" title="Cart">
         <i class="fas fa-shopping-bag"></i>
-        <?php if ($_cartCount > 0): ?><span class="badge"><?= $_cartCount ?></span><?php endif; ?>
+        <span class="badge" style="<?= $_cartCount > 0 ? '' : 'display:none;' ?>"><?= $_cartCount ?></span>
         <span class="hicon-label">Cart</span>
       </a>
 

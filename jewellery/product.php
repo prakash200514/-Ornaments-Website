@@ -154,7 +154,7 @@ include 'includes/header.php';
 
         <!-- Actions -->
         <?php if ($p['stock'] > 0): ?>
-        <form method="POST" style="margin-top:20px;">
+        <form method="POST" style="margin-top:20px;" id="mainAddToCartForm" data-id="<?= $p['id'] ?>">
           <div class="qty-control" style="margin-bottom:16px;">
             <span style="font-size:13px;font-weight:500;color:var(--gray);margin-right:8px;">Qty:</span>
             <button type="button" class="qty-btn" data-action="minus">−</button>
