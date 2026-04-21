@@ -19,8 +19,10 @@ if (isLoggedIn()) {
   $chk = $pdo->prepare("SELECT id, quantity FROM cart WHERE user_id=? AND product_id=?");
   $chk->execute([$_SESSION['user_id'], $productId]);
   $existing = $chk->fetch();
+  $itemQty = $quantity;
   if ($existing) {
-    $pdo->prepare("UPDATE cart SET quantity=quantity+? WHERE id=?")->execute([$quantity, $existing['id']]);
+    $itemQty = $existing['quantity'] + $quantity;
+    $pdo->prepare("UPDATE cart SET quantity=? WHERE id=?")->execute([$itemQty, $existing['id']]);
   } else {
     $pdo->prepare("INSERT INTO cart (user_id, product_id, quantity) VALUES (?,?,?)")->execute([$_SESSION['user_id'], $productId, $quantity]);
   }
@@ -30,8 +32,10 @@ if (isLoggedIn()) {
   $chk = $pdo->prepare("SELECT id, quantity FROM cart WHERE session_id=? AND product_id=?");
   $chk->execute([cartKey(), $productId]);
   $existing = $chk->fetch();
+  $itemQty = $quantity;
   if ($existing) {
-    $pdo->prepare("UPDATE cart SET quantity=quantity+? WHERE id=?")->execute([$quantity, $existing['id']]);
+    $itemQty = $existing['quantity'] + $quantity;
+    $pdo->prepare("UPDATE cart SET quantity=? WHERE id=?")->execute([$itemQty, $existing['id']]);
   } else {
     $pdo->prepare("INSERT INTO cart (session_id, product_id, quantity) VALUES (?,?,?)")->execute([cartKey(), $productId, $quantity]);
   }
@@ -40,4 +44,4 @@ if (isLoggedIn()) {
 }
 
 $count = (int)$countStmt->fetchColumn();
-echo json_encode(['success'=>true,'count'=>$count]);
+echo json_encode(['success'=>true,'count'=>$count,'item_qty'=>$itemQty]);

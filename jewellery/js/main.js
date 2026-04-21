@@ -119,13 +119,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         b.textContent = data.count;
                         b.style.display = 'flex';
                     });
+                    btn.innerHTML = `<i class="fas fa-check"></i> Added (${data.item_qty})`;
+                    btn.classList.add('added');
                 } else {
                     showToast(data.error || 'Failed to add', 'error');
+                    btn.innerHTML = originalHtml;
                 }
             } catch (err) {
                 showToast('Network error', 'error');
+                btn.innerHTML = originalHtml;
             }
-            btn.innerHTML = originalHtml;
             btn.disabled = false;
         });
     });
@@ -160,13 +163,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         b.textContent = data.count;
                         b.style.display = 'flex';
                     });
+                    btn.innerHTML = `<i class="fas fa-check"></i> Added (${data.item_qty})`;
+                    btn.classList.add('added');
                 } else {
                     showToast(data.error || 'Failed to add', 'error');
+                    btn.innerHTML = originalHtml;
                 }
             } catch (err) {
                 showToast('Network error', 'error');
+                btn.innerHTML = originalHtml;
             }
-            btn.innerHTML = originalHtml;
             btn.disabled = false;
         });
     }
