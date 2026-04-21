@@ -163,7 +163,14 @@ include 'includes/header.php';
             <input type="hidden" name="quantity" value="1"/>
           </div>
           <div class="detail-actions">
-            <button type="submit" name="add_cart" class="btn btn-cart btn-gold"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+            <?php $iqty = cartItemQuantity($pdo, $p['id']); ?>
+            <button type="submit" name="add_cart" class="btn btn-cart btn-gold <?= $iqty ? 'added' : '' ?>">
+              <?php if($iqty): ?>
+                <i class="fas fa-check"></i> Added (<?= $iqty ?>)
+              <?php else: ?>
+                <i class="fas fa-shopping-bag"></i> Add to Cart
+              <?php endif; ?>
+            </button>
             <button type="submit" name="add_cart" value="1" onclick="this.form.querySelector('[name=buy_now]').value='1'" class="btn btn-outline" style="color:var(--dark);border-color:var(--gold-dark);">
               <i class="fas fa-bolt"></i> Buy Now
             </button>
@@ -266,7 +273,14 @@ include 'includes/header.php';
               <?php if ($rdis): ?><span class="price-original"><?= money($rp['price']) ?></span><?php endif; ?>
             </div>
           </div>
-          <button class="product-cart-btn quick-cart" data-id="<?= $rp['id'] ?>"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          <?php $riqty = cartItemQuantity($pdo, $rp['id']); ?>
+          <button class="product-cart-btn quick-cart <?= $riqty ? 'added' : '' ?>" data-id="<?= $rp['id'] ?>">
+            <?php if($riqty): ?>
+              <i class="fas fa-check"></i> Added (<?= $riqty ?>)
+            <?php else: ?>
+              <i class="fas fa-shopping-bag"></i> Add to Cart
+            <?php endif; ?>
+          </button>
         </div>
         <?php endforeach; ?>
       </div>

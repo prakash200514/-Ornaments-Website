@@ -113,6 +113,16 @@ function cartCount(PDO $pdo) {
     }
     return (int)$stmt->fetchColumn();
 }
+function cartItemQuantity(PDO $pdo, $productId) {
+    if (isLoggedIn()) {
+        $stmt = $pdo->prepare("SELECT quantity FROM cart WHERE user_id=? AND product_id=?");
+        $stmt->execute([$_SESSION['user_id'], $productId]);
+    } else {
+        $stmt = $pdo->prepare("SELECT quantity FROM cart WHERE session_id=? AND product_id=?");
+        $stmt->execute([cartKey(), $productId]);
+    }
+    return (int)$stmt->fetchColumn();
+}
 function wishlistCount(PDO $pdo) {
     if (!isLoggedIn()) return 0;
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM wishlist WHERE user_id=?");

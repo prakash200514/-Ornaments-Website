@@ -182,8 +182,13 @@ include 'includes/header.php';
                 <?php if ($discount): ?><span class="price-original"><?= money($p['price']) ?></span><span class="price-discount"><?= $discount ?>% off</span><?php endif; ?>
               </div>
             </div>
-            <button class="product-cart-btn quick-cart" data-id="<?= $p['id'] ?>">
-              <i class="fas fa-shopping-bag"></i> Add to Cart
+            <?php $iqty = cartItemQuantity($pdo, $p['id']); ?>
+            <button class="product-cart-btn quick-cart <?= $iqty ? 'added' : '' ?>" data-id="<?= $p['id'] ?>">
+              <?php if($iqty): ?>
+                <i class="fas fa-check"></i> Added (<?= $iqty ?>)
+              <?php else: ?>
+                <i class="fas fa-shopping-bag"></i> Add to Cart
+              <?php endif; ?>
             </button>
           </div>
           <?php endforeach; ?>
